@@ -146,21 +146,21 @@ dependencies {
 **避免 Maven 肢解开来动态引用**
 不要用这种 `2.1.+` 模糊不清的动态引用，会导致使用不稳定版本编译和些细微的错误偏差之类的, 编译的时候根本不知道怎么会代码没改，东西不一样了. 用静态版本号 `2.1.1` 来建立稳定的, 可以预测，可以控制可以重复的开发环境.
 
-### IDEs and text editors
+### 开发工具和编辑器
 
-**Use whatever editor, but it must play nicely with the project structure.** Editors are a personal choice, and it's your responsibility to get your editor functioning according to the project structure and build system.
+**不管用什么编辑器，最好能和你的文件目录恰当匹配.** 编辑器看你自己的喜好来，但是需要注意的是你有责任让编辑器和你的编译系统，项目结构很好的结合运行.
 
-The most recommended IDE at the moment is [Android Studio](https://developer.android.com/sdk/installing/studio.html), because it is developed by Google, is closest to Gradle, uses the new project structure by default, is finally in stable stage, and is tailored for Android development.
+强烈推荐 [Android Studio](https://developer.android.com/sdk/installing/studio.html), 由google开发, 和Gradle紧密结合, 默认用了新的项目结构, 还发布了稳定版, 专门适配了 Android 的开发.
 
-You can use [Eclipse ADT](https://developer.android.com/sdk/installing/index.html?pkg=adt) if you wish, but you need to configure it, since it expects the old project structure and Ant for building. You can even use a plain text editor like Vim, Sublime Text, or Emacs. In that case, you will need to use Gradle and `adb` on the command line. If Eclipse's integration with Gradle is not working for you, your options are using the command line just to build, or migrating to Android Studio. This is the best option due to ADT plugin was deprecated recently.
+如果想的话，你也可以用 [Eclipse ADT](https://developer.android.com/sdk/installing/index.html?pkg=adt) , 但还得配环境, 用的是老的结构还有ant的编译器. 夸张点你也能用 Vim, Sublime Text, or Emacs 这种纯文本编辑器. 如果非那么干，估计你要用命令行来跑 Gradle and `adb` . 如果gradle和eclipse 结合对你来说不合适, 你可以选择命了行编译, 或者整合到Android studio. 这是ADT插件过时后最好的解决方案了。
 
-Whatever you use, just make sure Gradle and the new project structure remain as the official way of building the application, and avoid adding your editor-specific configuration files to the version control system. For instance, avoid adding an Ant `build.xml` file. Especially don't forget to keep `build.gradle` up-to-date and functioning if you are changing build configurations in Ant. Also, be kind to other developers, don't force them to change their tool of preference.
+不管用什么, 请保证 Gradle 和新的项目结构和官方的编译程序方式匹配，别把编辑器的配置文件放进版本控制器了.比如 ant 的 `build.xml` 文件. 特别注意，改ant配置后，记得保证 `build.gradle` 最新并且可以工作. 最后，每个人都有自己喜好，别老逼别人换IDE.
 
-### Libraries
+### 库
 
-**[Jackson](http://wiki.fasterxml.com/JacksonHome)** is a Java library for converting Objects into JSON and vice-versa. [Gson](https://code.google.com/p/google-gson/) is a popular choice for solving this problem, however we find Jackson to be more performant since it supports alternative ways of processing JSON: streaming, in-memory tree model, and traditional JSON-POJO data binding. Keep in mind, though, that Jackson is a larger library than GSON, so depending on your case, you might prefer GSON to avoid 65k methods limitation. Other alternatives: [Json-smart](https://code.google.com/p/json-smart/) and [Boon JSON](https://github.com/RichardHightower/boon/wiki/Boon-JSON-in-five-minutes)
+**[Jackson](http://wiki.fasterxml.com/JacksonHome)** JSON 和对象互转用的. [Gson](https://code.google.com/p/google-gson/) 也是干这个用的, 但是发现 Jackson  性能更好自从它支持更多可选择的方式处理json: 流, 内存树模型, 传统的 JSON-POJO 数据绑定. 记住, 尽管Jackson 比GSON大, 按情况分析取舍,你可能更喜欢 GSON 轻量. 其他的方案: [Json-smart](https://code.google.com/p/json-smart/) 和 [Boon JSON](https://github.com/RichardHightower/boon/wiki/Boon-JSON-in-five-minutes)
 
-**Networking, caching, and images.** There are a couple of battle-proven solutions for performing requests to backend servers, which you should use perform considering implementing your own client. Use [Volley](https://android.googlesource.com/platform/frameworks/volley) or [Retrofit](http://square.github.io/retrofit/). Volley also provides helpers to load and cache images. If you choose Retrofit, consider [Picasso](http://square.github.io/picasso/) for loading and caching images, and [OkHttp](http://square.github.io/okhttp/) for efficient HTTP requests. All three Retrofit, Picasso and OkHttp are created by the same company, so they complement each other nicely. [OkHttp can also be used in connection with Volley](http://stackoverflow.com/questions/24375043/how-to-implement-android-volley-with-okhttp-2-0/24951835#24951835).
+**网络, 缓存, 和图片.** 处理请求和后端服务器有挺多不错的方案. 用 [Volley](https://android.googlesource.com/platform/frameworks/volley) 或者 [Retrofit](http://square.github.io/retrofit/). Volley 也能引用来加载缓存图片. 如果你用 Retrofit, 可以考虑配合 [Picasso](http://square.github.io/picasso/) 来加载缓存图片, 配合 [OkHttp](http://square.github.io/okhttp/) 做高效请求. 这三个Retrofit, Picasso 和 OkHttp 都是一个公司出的所以结合起来比较好. [OkHttp can also be used in connection with Volley](http://stackoverflow.com/questions/24375043/how-to-implement-android-volley-with-okhttp-2-0/24951835#24951835).
 
 **RxJava** is a library for Reactive Programming, in other words, handling asynchronous events. It is a powerful and promising paradigm, which can also be confusing since it's so different. We recommend to take some caution before using this library to architect the entire application. There are some projects done by us using RxJava, if you need help talk to one of these people: Timo Tuominen, Olli Salonen, Andre Medeiros, Mark Voit, Antti Lammi, Vera Izrailit, Juha Ristolainen. We have written some blog posts on it: [[1]](http://blog.futurice.com/tech-pick-of-the-week-rx-for-net-and-rxjava-for-android), [[2]](http://blog.futurice.com/top-7-tips-for-rxjava-on-android), [[3]](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754), [[4]](http://blog.futurice.com/android-development-has-its-own-swift).
 
@@ -235,7 +235,7 @@ com.futurice.project
    └─ notifications
 ```
 
-### Resources
+### 资源文件
 
 **Naming.** Follow the convention of prefixing the type, as in `type_foo_bar.xml`. Examples: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
 
