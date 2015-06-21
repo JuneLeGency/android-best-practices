@@ -1,56 +1,56 @@
-# Best practices in Android development
+# Android 开发的最正确做法
 
-Lessons learned from Android developers in [Futurice](http://www.futurice.com). Avoid reinventing the wheel by following these guidelines. If you are interested in iOS or Windows Phone development, be sure to check also our [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) and [**Windows App Development Best Practices**](https://github.com/futurice/windows-app-development-best-practices) documents.
+这是我们从[Futurice](http://www.futurice.com) 开发者得到的经验教训. 希望大家可以通过阅读下面的tips 避免造重复的轮子（Do not repeat yourself）. 如果你对ios和winphone的开发也感兴趣可以参考 [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) 和 [**Windows App Development Best Practices**](https://github.com/futurice/windows-app-development-best-practices) 这两个文档（尚未翻译）.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--best--practices-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1091)
 
-## Summary
+## 总结
 
-#### Use Gradle and its recommended project structure
-#### Put passwords and sensitive data in gradle.properties
-#### Don't write your own HTTP client, use Volley or OkHttp libraries
-#### Use the Jackson library to parse JSON data
-#### Avoid Guava and use only a few libraries due to the *65k method limit*
-#### Use Fragments to represent a UI screen
-#### Use Activities just to manage Fragments
-#### Layout XMLs are code, organize them well
-#### Use styles to avoid duplicate attributes in layout XMLs
-#### Use multiple style files to avoid a single huge one
-#### Keep your colors.xml short and DRY, just define the palette
-#### Also keep dimens.xml DRY, define generic constants
-#### Do not make a deep hierarchy of ViewGroups
-#### Avoid client-side processing for WebViews, and beware of leaks
-#### Use Robolectric for unit tests, Robotium for connected (UI) tests
-#### Use Genymotion as your emulator
-#### Always use ProGuard or DexGuard
+#### 使用Gradle 推荐的 项目结构方式
+#### 把密码和隐秘的信息放在  gradle.properties 文件里
+#### 不要自己搭建http架构, 使用 Volley  OkHttp 这种开源库
+#### 使用 Jackson library to 来解析json数据 （PS：我个人比较推荐gson  国内的fastjson也不错好像是阿里巴巴的）
+#### 不要使用 Guava 库 因为 *65k 方法的限制* 建议使用一些轻量的库（PS：我用过这个Guava的库，确实很方便 也很坑，处理一些大数据分组排序这种东西很爽,但是太重量级了）
+#### 使用Fragment 来重新规划你的视图 （避免视图重复利用）
+#### 仅仅使用activity来管理这些fragment （就是不要在activity 干太多视图等等奇葩的事，交给fragment 尽量分出去）
+#### 布局xml layout 也是代码，请你重视它，合理规划它们，组织好它们
+#### 尽量使用style来建立 主题，不要定义一大堆的 属性值 （还是那点，避免重复）
+#### 样式文件尽量建多个，别堆在一个里面
+#### colors.xml 颜色文件定义要短，不要重复, 尽量只定义色块
+#### dimens.xml 数值文件也尽量不要重复，尽量弄成全局使用
+#### ViewGroups 树形结构不要定义的太深 (做视图的时候不要嵌套太深，很容易出现 over draw 浪费性能 关于性能优化相关视频 [youtube](https://www.youtube.com/playlist?list=PLWz5rJ2EKKc9CBxr3BVjPTPoDPLdPIFCE) [优酷](http://v.youku.com/v_show/id_XODY3NjY5NTg0.html?from=s1.8-1-1.2))
+#### 避免客户端处理网页视图，防止内存泄露
+#### 使用 Robolectric 来做单元测试, 用 Robotium 来做UI方面测试
+#### 用 Genymotion 作为模拟器 （其实不建议模拟器开发，不差那点钱吧）
+#### 一定记得混淆  用 ProGuard or DexGuard
 
 
 ----------
 
 ### Android SDK
 
-Place your [Android SDK](https://developer.android.com/sdk/installing/index.html?pkg=tools) somewhere in your home directory or some other application-independent location. Some IDEs include the SDK when installed, and may place it under the same directory as the IDE. This can be bad when you need to upgrade (or reinstall) the IDE, or when changing IDEs. Also avoid putting the SDK in another system-level directory that might need sudo permissions, if your IDE is running under your user and not under root.
+把 [Android SDK](https://developer.android.com/sdk/installing/index.html?pkg=tools) 放在主目录下面或者应用独立的一个目录. 有些开发工具会更新甚至修改这些sdk，容易出问题。（简言之，sdk单独出来，怕eclipse  android studio 影响sdk 不然重装sdk 很麻烦）. linux用户不要放在需要系统级别的文件夹，不然可能需要sudo权限。
 
-### Build system
+### 编译环境
 
-Your default option should be [Gradle](http://tools.android.com/tech-docs/new-build-system). Ant is much more limited and also more verbose. With Gradle, it's simple to:
+默认选择 [Gradle](http://tools.android.com/tech-docs/new-build-system). Ant 局限性大还墨迹. 用 Gradle, 很容易干这些事:
 
-- Build different flavours or variants of your app
-- Make simple script-like tasks
-- Manage and download dependencies
-- Customize keystores
-- And more
+- 编译不同风格多样的app
+- 简单的脚本风格任务
+- 容易组织下载依赖包
+- 自定义 签名方式加密方式 keystores
+- 等等
 
-Android's Gradle plugin is also being actively developed by Google as the new standard build system.
+Gradle 插件也是google比较推崇的 比较火的 一个新的编译系统 所以建议使用.
 
-### Project structure
+### 项目结构
 
-There are two popular options: the old Ant & Eclipse ADT project structure, and the new Gradle & Android Studio project structure. You should choose the new project structure. If your project uses the old structure, consider it legacy and start porting it to the new structure.
+有两个选择: 老的 Ant + Eclipse ADT 项目结构, 和新的 Gradle + Android Studio 项目结构.你需要选择新的结构方式. 如果您还在用老的，建议您调整适配的新的结构中去.
 
-Old structure:
+老的结构:
 
 ```
-old-structure
+老结构
 ├─ assets
 ├─ libs
 ├─ res
@@ -62,10 +62,10 @@ old-structure
 └─ proguard-rules.pro
 ```
 
-New structure:
+新的结构:
 
 ```
-new-structure
+新结构
 ├─ library-foobar
 ├─ app
 │  ├─ libs
@@ -84,19 +84,19 @@ new-structure
 └─ settings.gradle
 ```
 
-The main difference is that the new structure explicitly separates 'source sets' (`main`, `androidTest`), a concept from Gradle. You could, for instance, add source sets 'paid' and 'free' into `src` which will have source code for the paid and free flavours of your app.
+最大的去别就是新的结构里面把 代码集合source set(`main`, `androidTest`)很清楚地分开了, 这是Gradle的理念. 举个例子, 你可以加两个新的标签代码库  'paid' 和 'free' 到 `src` 目录下 你就有了关于 付钱代码和免费代码这两个属性的app了.
 
-Having a top-level `app` is useful to distinguish your app from other library projects (e.g., `library-foobar`) that will be referenced in your app. The `settings.gradle` then keeps references to these library projects, which `app/build.gradle` can reference to.
+有一个高级别的 `app` 文件夹把你和库项目 (比如., `library-foobar`被你主项目引用的库)区分开来  `settings.gradle` 存了 `app/build.gradle` 可以引用的库的数据.
 
-### Gradle configuration
+### Gradle 配置
 
-**General structure.** Follow [Google's guide on Gradle for Android](http://tools.android.com/tech-docs/new-build-system/user-guide)
+**通用的文件结构.** 参考 [Google's guide on Gradle for Android](http://tools.android.com/tech-docs/new-build-system/user-guide)
 
-**Small tasks.** Instead of (shell, Python, Perl, etc) scripts, you can make tasks in Gradle. Just follow [Gradle's documentation](http://www.gradle.org/docs/current/userguide/userguide_single.html#N10CBF) for more details.
+**小的脚本任务.** 跟 (shell, Python, Perl, etc) 这些脚本不同, 你可以在gradle里面建任务. 参考 [Gradle's documentation](http://www.gradle.org/docs/current/userguide/userguide_single.html#N10CBF) 看看具体怎么做.
 
-**Passwords.** In your app's `build.gradle` you will need to define the `signingConfigs` for the release build. Here is what you should avoid:
+**密码.** 当你弄发布版本的时候，在`build.gradle` 文件中你会需要定义 加密方式`signingConfigs` . 下面是你需要避免的事:
 
-_Don't do this_. This would appear in the version control system.
+_别这么干_. 这个会提交代码大家全看见了.
 
 ```groovy
 signingConfigs {
@@ -109,14 +109,14 @@ signingConfigs {
 }
 ```
 
-Instead, make a `gradle.properties` file which should _not_ be added to the version control system:
+取而代之, 建立一个不会加入版本控制系统的 `gradle.properties` 文件 :
 
 ```
 KEYSTORE_PASSWORD=password123
 KEY_PASSWORD=password789
 ```
 
-That file is automatically imported by gradle, so you can use it in `build.gradle` as such:
+这个文件会被 gradle自动引用, 所以你可以这么用 `build.gradle`:
 
 ```groovy
 signingConfigs {
@@ -134,7 +134,7 @@ signingConfigs {
 }
 ```
 
-**Prefer Maven dependency resolution instead of importing jar files.** If you explicitly include jar files in your project, they will be of some specific frozen version, such as `2.1.1`. Downloading jars and handling updates is cumbersome, this is a problem that Maven solves properly, and is also encouraged in Android Gradle builds. For example:
+**尽量用 Maven 来管理jar包 的依赖 不要引用 jar 文件.** 单独引进来是一个单独的版本，会导致没法更新jar，用Maven很容易解决这个问题. 比如:
 
 ```groovy
 dependencies {
@@ -143,8 +143,8 @@ dependencies {
 }
 ```    
 
-**Avoid Maven dynamic dependency resolution**
-Avoid the use of dynamically versioned, such as `2.1.+` as this may result in different in unstable builds or subtle, untracked differences in behavior between builds. The use of static versions such as `2.1.1` helps create a more stable, predictable and repeatable development environment.
+**避免 Maven 肢解开来动态引用**
+不要用这种 `2.1.+` 模糊不清的动态引用，会导致使用不稳定版本编译和些细微的错误偏差之类的, 编译的时候根本不知道怎么会代码没改，东西不一样了. 用静态版本号 `2.1.1` 来建立稳定的, 可以预测，可以控制可以重复的开发环境.
 
 ### IDEs and text editors
 
