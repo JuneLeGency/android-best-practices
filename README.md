@@ -162,11 +162,11 @@ dependencies {
 
 **网络, 缓存, 和图片.** 处理请求和后端服务器有挺多不错的方案. 用 [Volley](https://android.googlesource.com/platform/frameworks/volley) 或者 [Retrofit](http://square.github.io/retrofit/). Volley 也能引用来加载缓存图片. 如果你用 Retrofit, 可以考虑配合 [Picasso](http://square.github.io/picasso/) 来加载缓存图片, 配合 [OkHttp](http://square.github.io/okhttp/) 做高效请求. 这三个Retrofit, Picasso 和 OkHttp 都是一个公司出的所以结合起来比较好. [OkHttp can also be used in connection with Volley](http://stackoverflow.com/questions/24375043/how-to-implement-android-volley-with-okhttp-2-0/24951835#24951835).
 
-**RxJava** is a library for Reactive Programming, in other words, handling asynchronous events. It is a powerful and promising paradigm, which can also be confusing since it's so different. We recommend to take some caution before using this library to architect the entire application. There are some projects done by us using RxJava, if you need help talk to one of these people: Timo Tuominen, Olli Salonen, Andre Medeiros, Mark Voit, Antti Lammi, Vera Izrailit, Juha Ristolainen. We have written some blog posts on it: [[1]](http://blog.futurice.com/tech-pick-of-the-week-rx-for-net-and-rxjava-for-android), [[2]](http://blog.futurice.com/top-7-tips-for-rxjava-on-android), [[3]](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754), [[4]](http://blog.futurice.com/android-development-has-its-own-swift).
+**RxJava** 是做响应式编程的, 换句话说就是处理异步任务的. 很强大而且用了 promising 理念（关于这点有兴趣的可以查下，是一种设计方式，用起来很舒服）, 不过也可能让你迷惑毕竟这东西挺特别的. 建议你用这个库搭整个项目时候考虑清楚了. 有些项目用了 RxJava, 需要帮忙可以问这些人: Timo Tuominen, Olli Salonen, Andre Medeiros, Mark Voit, Antti Lammi, Vera Izrailit, Juha Ristolainen. 我们已经写了些博客关于这个的: [[1]](http://blog.futurice.com/tech-pick-of-the-week-rx-for-net-and-rxjava-for-android), [[2]](http://blog.futurice.com/top-7-tips-for-rxjava-on-android), [[3]](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754), [[4]](http://blog.futurice.com/android-development-has-its-own-swift).
 
-If you have no previous experience with Rx, start by applying it only for responses from the API. Alternatively, start by applying it for simple UI event handling, like click events or typing events on a search field. If you are confident in your Rx skills and want to apply it to the whole architecture, then write Javadocs on all the tricky parts. Keep in mind that another programmer unfamiliar to RxJava might have a very hard time maintaining the project. Do your best to help them understand your code and also Rx.
+如果用 Rx这个没什么经验, 可以尝试仅仅在api返回响应用一下. 或者试下在简单的界面事件处理上用下, 比如搜索框里的点击事件和字符串变化事件. 如果你打算在整个项目中用 Rx技术 记得在这些取巧的地方写Java文档 . 记住不熟悉 RxJava 的维护这个项目可能很费事. 尽力帮助他们读懂代码和 理解Rx的概念.
 
-**[Retrolambda](https://github.com/evant/gradle-retrolambda)** is a Java library for using Lambda expression syntax in Android and other pre-JDK8 platforms. It helps keep your code tight and readable especially if you use a functional style with for example with RxJava. To use it, install JDK8, set that as your SDK Location in the Android Studio Project Structure dialog, and set `JAVA8_HOME` and `JAVA7_HOME` environment variables, then in the project root build.gradle:
+**[Retrolambda](https://github.com/evant/gradle-retrolambda)** 是个在Android和JDK8预览版平台用lambda表达式的库 . It helps keep your code tight and readable especially if you use a functional style with for example with RxJava. To use it, install JDK8, set that as your SDK Location in the Android Studio Project Structure dialog, and set `JAVA8_HOME` and `JAVA7_HOME` environment variables, then in the project root build.gradle:
 
 ```groovy
 dependencies {
@@ -199,17 +199,17 @@ Android Studio offers code assist support for Java8 lambdas. If you are new to l
 
 **Beware of the dex method limitation, and avoid using many libraries.** Android apps, when packaged as a dex file, have a hard limitation of 65536 referenced methods [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). You will see a fatal error on compilation if you pass the limit. For that reason, use a minimal amount of libraries, and use the [dex-method-counts](https://github.com/mihaip/dex-method-counts) tool to determine which set of libraries can be used in order to stay under the limit. Especially avoid using the Guava library, since it contains over 13k methods.
 
-### Activities and Fragments
+### Activities 和 Fragments
 
 There is no consensus among the community nor Futurice developers how to best organize Android architectures with Fragments and Activities. Square even has [a library for building architectures mostly with Views](https://github.com/square/mortar), bypassing the need for Fragments, but this still is not considered a widely recommendable practice in the community.
 
 Because of Android API's history, you can loosely consider Fragments as UI pieces of a screen. In other words, Fragments are normally related to UI. Activities can be loosely considered to be controllers, they are specially important for their lifecycle and for managing state. However, you are likely to see variation in these roles: activities might be take UI roles ([delivering transitions between screens](https://developer.android.com/about/versions/lollipop.html)), and [fragments might be used solely as controllers](http://developer.android.com/guide/components/fragments.html#AddingWithoutUI). We suggest to sail carefully, taking informed decisions since there are drawbacks for choosing a fragments-only architecture, or activities-only, or views-only. Here are some advices on what to be careful with, but take them with a grain of salt:
 
-- Avoid using [nested fragments](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) extensively, because [matryoshka bugs](http://delyan.me/android-s-matryoshka-problem/) can occur. Use nested fragments only when it makes sense (for instance, fragments in a horizontally-sliding ViewPager inside a screen-like fragment) or if it's a well-informed decision.
+- 避免大规模 [嵌套 fragments](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) , 因为 会有这种[matryoshka bugs](http://delyan.me/android-s-matryoshka-problem/) . Use nested fragments only when it makes sense (for instance, fragments in a horizontally-sliding ViewPager inside a screen-like fragment) or if it's a well-informed decision.
 - Avoid putting too much code in activities. Whenever possible, keep them as lightweight containers, existing in your application primarily for the lifecycle and other important Android-interfacing APIs. Prefer single-fragment activities instead of plain activities - put UI code into the activity's fragment. This makes it reusable in case you need to change it to reside in a tabbed layout, or in a multi-fragment tablet screen. Avoid having an activity without a corresponding fragment, unless you are making an informed decision.
 - Don't abuse Android-level APIs such as heavily relying on Intent for your app's internal workings. You could affect the Android OS or other applications, creating bugs or lag. For instance, it is known that if your app uses Intents for internal communication between your packages, you might incur multi-second lag on user experience if the app was opened just after OS boot.
 
-### Java packages architecture
+### Java 包结构
 
 Java architectures for Android applications can be roughly approximated in [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller). In Android, [Fragment and Activity are actually controller classes](http://www.informit.com/articles/article.aspx?p=2126865). On the other hand, they are explicity part of the user interface, hence are also views.
 
@@ -219,7 +219,7 @@ Otherwise, the architecture can look like a typical MVC, with a `models` package
 
 Some controller classes are application-wide and close to the Android system. These can live in a `managers` package. Miscellaneous data processing classes, such as "DateUtils", stay in the `utils` package. Classes that are responsible for interacting with the backend stay in the `network` package.
 
-All in all, ordered from the closest-to-backend to the closest-to-the-user:
+总而言之，要贴近后台贴近用户:
 
 ```
 com.futurice.project
@@ -237,9 +237,9 @@ com.futurice.project
 
 ### 资源文件
 
-**Naming.** Follow the convention of prefixing the type, as in `type_foo_bar.xml`. Examples: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
+**命名.** Follow the convention of prefixing the type, as in `type_foo_bar.xml`. Examples: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
 
-**Organizing layout XMLs.** If you're unsure how to format a layout XML, the following convention may help.
+**组织 layout XMLs文件.** If you're unsure how to format a layout XML, the following convention may help.
 
 - One attribute per line, indented by 4 spaces
 - `android:id` as the first attribute always
@@ -281,7 +281,7 @@ The exceptions are:
 - `android:text` should be in layout files because it defines content
 - Sometimes it will make sense to make a generic style defining `android:layout_width` and `android:layout_height` but by default these should appear in the layout files
 
-**Use styles.** Almost every project needs to properly use styles, because it is very common to have a repeated appearance for a view. At least you should have a common style for most text content in the application, for example:
+**用法.** Almost every project needs to properly use styles, because it is very common to have a repeated appearance for a view. At least you should have a common style for most text content in the application, for example:
 
 ```xml
 <style name="ContentText">
@@ -307,7 +307,7 @@ You probably will need to do the same for buttons, but don't stop there yet. Go 
 
 **`colors.xml` is a color palette.** There should be nothing else in your `colors.xml` than just a mapping from a color name to an RGBA value. Do not use it to define RGBA values for different types of buttons.
 
-*Don't do this:*
+*别这么干:*
 
 ```xml
 <resources>
@@ -323,7 +323,7 @@ You probably will need to do the same for buttons, but don't stop there yet. Go 
 
 You can easily start repeating RGBA values in this format, and that makes it complicated to change a basic color if needed. Also, those definitions are related to some context, like "button" or "comment", and should live in a button style, not in `colors.xml`.
 
-Instead, do this:
+取而代之这么做:
 
 ```xml
 <resources>
@@ -378,33 +378,33 @@ You should use the `spacing_****` dimensions for layouting, in margins and paddi
 
 Name your strings with keys that resemble namespaces, and don't be afraid of repeating a value for two or more keys. Languages are complex, so namespaces are necessary to bring context and break ambiguity.
 
-**Bad**
+**差的方式**
 ```xml
 <string name="network_error">Network error</string>
 <string name="call_failed">Call failed</string>
 <string name="map_failed">Map loading failed</string>
 ```
 
-**Good**
+**好的方式**
 ```xml
 <string name="error.message.network">Network error</string>
 <string name="error.message.call">Call failed</string>
 <string name="error.message.map">Map loading failed</string>
 ```
 
-Don't write string values in all uppercase. Stick to normal text conventions (e.g., capitalize first character). If you need to display the string in all caps, then do that using for instance the attribute [`textAllCaps`](http://developer.android.com/reference/android/widget/TextView.html#attr_android:textAllCaps) on a TextView.
+别写全大写的字符串. 坚持正常的字符结构  (比如首字母大写). 如果你想让所有字母都大写可以这么做, 加[`textAllCaps`](http://developer.android.com/reference/android/widget/TextView.html#attr_android:textAllCaps) 这个属性到Textview上.
 
-**Bad**
+**差的方式**
 ```xml
 <string name="error.message.call">CALL FAILED</string>
 ```
 
-**Good**
+**好的方式**
 ```xml
 <string name="error.message.call">Call failed</string>
 ```
 
-**Avoid a deep hierarchy of views.** Sometimes you might be tempted to just add yet another LinearLayout, to be able to accomplish an arrangement of views. This kind of situation may occur:
+**别建那么深的树形视图.** Sometimes you might be tempted to just add yet another LinearLayout, to be able to accomplish an arrangement of views. This kind of situation may occur:
 
 ```xml
 <LinearLayout
@@ -448,7 +448,7 @@ Therefore, try to keep your views hierarchy as flat as possible: learn how to us
 **Beware of problems related to WebViews.** When you must display a web page, for instance for a news article, avoid doing client-side processing to clean the HTML, rather ask for a "*pure*" HTML from the backend programmers. [WebViews can also leak memory](http://stackoverflow.com/questions/3130654/memory-leak-in-webview) when they keep a reference to their Activity, instead of being bound to the ApplicationContext. Avoid using a WebView for simple texts or buttons, prefer TextViews or Buttons.
 
 
-### Test frameworks
+### 测试用的框架
 
 Android SDK's testing framework is still infant, specially regarding UI tests. Android Gradle currently implements a test task called [`connectedAndroidTest`](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing) which runs JUnit tests that you created, using an [extension of JUnit with helpers for Android](http://developer.android.com/reference/android/test/package-summary.html). This means you will need to run tests connected to a device, or an emulator. Follow the official guide [[1]](http://developer.android.com/tools/testing/testing_android.html) [[2]](http://developer.android.com/tools/testing/activity_test.html) for testing.
 
@@ -464,15 +464,15 @@ solo.clickOnText("Edit File Extensions");
 Assert.assertTrue(solo.searchText("rtf"));
 ```
 
-### Emulators
+### 模拟器
 
-If you are developing Android apps as a profession, buy a license for the [Genymotion emulator](http://www.genymotion.com/). Genymotion emulators run at a faster frames/sec rate than typical AVD emulators. They have tools for demoing your app, emulating network connection quality, GPS positions, etc. They are also ideal for connected tests. You have access to many (not all) different devices, so the cost of a Genymotion license is actually much cheaper than buying multiple real devices.
+要是你是个专业的android 开发者, 买个 [Genymotion 模拟器](http://www.genymotion.com/)证书不错. Genymotion emulators run at a faster frames/sec rate than typical AVD emulators. They have tools for demoing your app, emulating network connection quality, GPS positions, etc. They are also ideal for connected tests. You have access to many (not all) different devices, so the cost of a Genymotion license is actually much cheaper than buying multiple real devices.
 
-Caveats are: Genymotion emulators don't ship all Google services such as Google Play Store and Maps. You might also need to test Samsung-specific APIs, so it's necessary to have a real Samsung device.
+说明: Genymotion 模拟器保留了完整的google服务框架 比如google商店 地图什么的 . 你可能需要测试 Samsung-specific APIs, 所以买个三星设备也许挺需要.
 
-### Proguard configuration
+### 代码混淆器的配置
 
-[ProGuard](http://proguard.sourceforge.net/) is normally used on Android projects to shrink and obfuscate the packaged code.
+[ProGuard](http://proguard.sourceforge.net/) 在 Android项目中 压缩代码模糊代码方面 用的很普遍.
 
 Whether you are using ProGuard or not depends on your project configuration. Usually you would configure gradle to use ProGuard when building a release apk.
 
@@ -516,11 +516,11 @@ Read more at [Proguard](http://proguard.sourceforge.net/#manual/examples.html) f
 
 **Early on in your project, make a release build** to check whether ProGuard rules are correctly keeping whatever is important. Also whenever you include new libraries, make a release build and test the apk on a device. Don't wait until your app is finally version "1.0" to make a release build, you might get several unpleasant surprises and a short time to fix them.
 
-**Tip.** Save the `mapping.txt` file for every release that you publish to your users. By retaining a copy of the `mapping.txt` file for each release build, you ensure that you can debug a problem if a user encounters a bug and submits an obfuscated stack trace.
+**建议.** Save the `mapping.txt` file for every release that you publish to your users. By retaining a copy of the `mapping.txt` file for each release build, you ensure that you can debug a problem if a user encounters a bug and submits an obfuscated stack trace.
 
 **DexGuard**. If you need hard-core tools for optimizing, and specially obfuscating release code, consider [DexGuard](http://www.saikoa.com/dexguard), a commercial software made by the same team that built ProGuard. It can also easily split Dex files to solve the 65k methods limitation.
 
-### Thanks to
+### 感谢
 
 Antti Lammi, Joni Karppinen, Peter Tackage, Timo Tuominen, Vera Izrailit, Vihtori Mäntylä, Mark Voit, Andre Medeiros, Paul Houghton and other Futurice developers for sharing their knowledge on Android development.
 
