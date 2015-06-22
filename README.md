@@ -166,7 +166,7 @@ dependencies {
 
 如果用 Rx这个没什么经验, 可以尝试仅仅在api返回响应用一下. 或者试下在简单的界面事件处理上用下, 比如搜索框里的点击事件和字符串变化事件. 如果你打算在整个项目中用 Rx技术 记得在这些取巧的地方写Java文档 . 记住不熟悉 RxJava 的维护这个项目可能很费事. 尽力帮助他们读懂代码和 理解Rx的概念.
 
-**[Retrolambda](https://github.com/evant/gradle-retrolambda)** 是个在Android和JDK8预览版平台用lambda表达式的库 . It helps keep your code tight and readable especially if you use a functional style with for example with RxJava. To use it, install JDK8, set that as your SDK Location in the Android Studio Project Structure dialog, and set `JAVA8_HOME` and `JAVA7_HOME` environment variables, then in the project root build.gradle:
+**[Retrolambda](https://github.com/evant/gradle-retrolambda)** 是个在Android和JDK8预览版平台用lambda表达式的库 . 使用RxJava 会让你的代码可读性很强，并且优雅富有美感. 使用它, 安装 JDK8,在Android Studio Project 结构对话框里配置你的SDK 位置 , 然后设置 `JAVA8_HOME` 和 `JAVA7_HOME` 环境变量, 然后再项目文件 build.gradle加上:
 
 ```groovy
 dependencies {
@@ -174,7 +174,7 @@ dependencies {
 }
 ```
 
-and in each module's build.gradle, add
+在每个module 中的 build.gradle文件添加
 
 ```groovy
 apply plugin: 'retrolambda'
@@ -192,32 +192,31 @@ retrolambda {
 }
 ```
 
-Android Studio offers code assist support for Java8 lambdas. If you are new to lambdas, just use the following to get started:
+Android Studio 提供了代码提示用于 Java8 lambdas 表达式. 如果你是新手看看下面的东西:
 
-- Any interface with just one method is "lambda friendly" and can be folded into the more tight syntax
-- If in doubt about parameters and such, write a normal anon inner class and then let Android Studio fold it into a lambda for you.
+- 只用一个方法的接口是非常兼容lambda 特性的  也更方便整到 更紧密的表达式中
+- 碰到参数拿不准可以写一个匿名内部类 让Android Studio 帮你整合出到一个lambda中.
 
-**Beware of the dex method limitation, and avoid using many libraries.** Android apps, when packaged as a dex file, have a hard limitation of 65536 referenced methods [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). You will see a fatal error on compilation if you pass the limit. For that reason, use a minimal amount of libraries, and use the [dex-method-counts](https://github.com/mihaip/dex-method-counts) tool to determine which set of libraries can be used in order to stay under the limit. Especially avoid using the Guava library, since it contains over 13k methods.
+**注意 dex 方法限制, 避免使用太多的库.** Android 应用在打包成dex的时候有个强硬限制,引用的方法 要在65536大小之内 [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). 你要是无视这个限制编译的时候可能会挂掉. 就因为这样, 尽量使用小的库, 也顺便用 [dex-method-counts](https://github.com/mihaip/dex-method-counts) 这个工具来测测那些库可以用. 特别注意不要用 Guava 库, 因为这货超过了13K.
 
 ### Activities 和 Fragments
+在社区论坛里，怎么着能最好地组织Fragments 和 Activities 的android 结构 还没有共识。Square 甚至还出了 [一个库](https://github.com/square/mortar)通过传递fragment来用来建立更好的视图, 但也没推行起来，大家用的并不多.
 
-There is no consensus among the community nor Futurice developers how to best organize Android architectures with Fragments and Activities. Square even has [a library for building architectures mostly with Views](https://github.com/square/mortar), bypassing the need for Fragments, but this still is not considered a widely recommendable practice in the community.
+由于Android API's 历史原因, 你可以简单的用 Fragments 作为展示视图的块. 换句话说, Fragments 更贴近UI. Activities 可以简单的 当做controllers, 他们在维护生命周期和状态的时候特别重要. 不过你可能见过泽泻角色变换: activities 可能管理UI 去了([delivering transitions between screens](https://developer.android.com/about/versions/lollipop.html)), 而 [fragments 又去当控制器去了](http://developer.android.com/guide/components/fragments.html#AddingWithoutUI). 不管怎么说，希望你们用的时候小心点，因为如果只用fragment 只用activity 和只用view都会有弊端。 下面是一些建议，你看和你的想法一致就采纳不一定非要套用:
 
-Because of Android API's history, you can loosely consider Fragments as UI pieces of a screen. In other words, Fragments are normally related to UI. Activities can be loosely considered to be controllers, they are specially important for their lifecycle and for managing state. However, you are likely to see variation in these roles: activities might be take UI roles ([delivering transitions between screens](https://developer.android.com/about/versions/lollipop.html)), and [fragments might be used solely as controllers](http://developer.android.com/guide/components/fragments.html#AddingWithoutUI). We suggest to sail carefully, taking informed decisions since there are drawbacks for choosing a fragments-only architecture, or activities-only, or views-only. Here are some advices on what to be careful with, but take them with a grain of salt:
-
-- 避免大规模 [嵌套 fragments](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) , 因为 会有这种[matryoshka bugs](http://delyan.me/android-s-matryoshka-problem/) . Use nested fragments only when it makes sense (for instance, fragments in a horizontally-sliding ViewPager inside a screen-like fragment) or if it's a well-informed decision.
-- Avoid putting too much code in activities. Whenever possible, keep them as lightweight containers, existing in your application primarily for the lifecycle and other important Android-interfacing APIs. Prefer single-fragment activities instead of plain activities - put UI code into the activity's fragment. This makes it reusable in case you need to change it to reside in a tabbed layout, or in a multi-fragment tablet screen. Avoid having an activity without a corresponding fragment, unless you are making an informed decision.
-- Don't abuse Android-level APIs such as heavily relying on Intent for your app's internal workings. You could affect the Android OS or other applications, creating bugs or lag. For instance, it is known that if your app uses Intents for internal communication between your packages, you might incur multi-second lag on user experience if the app was opened just after OS boot.
+- 避免大规模 [嵌套 fragments](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) , 因为 会有这种[matryoshka bugs](http://delyan.me/android-s-matryoshka-problem/) . 仅仅当嵌套fragments 有意义的时候才弄 (比如, fragments 在水平滑动的 ViewPager里面 又在 像屏幕的fragment里面) or 除非你非常清楚自己要做什么.
+- 在activity里面别扔太多代码. 记得不论在什么时候尽量让你的它只管理生命周期和一些重要的Android API 交互的事情. 最好用单个 fragment activity 代替简单的activity - 把UI的代码放在这个fragment里面. 这样的话当你放在选项卡布局页面，或者平板多fragment交互页面的时候 可以重用. 尽量避免一个activity 不加任何fragment 除非你下定了要这么干.
+- 不要烂用 Android-级别的 APIs 比如特别依赖app Intent的工作机制. 这样会影响 Android 系统和其他程序, 产生bug或者延迟. 比如, 如果你用Intents 放在包之间的内部交互，当app在系统刚启动的时候，用户会感觉产生重复的二次延迟。（这点我也不是很理解，有深入了解的可以探讨下发issue 或者mail我 可能翻译的不当）
 
 ### Java 包结构
 
-Java architectures for Android applications can be roughly approximated in [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller). In Android, [Fragment and Activity are actually controller classes](http://www.informit.com/articles/article.aspx?p=2126865). On the other hand, they are explicity part of the user interface, hence are also views.
+ Android 应用的java结构的用 MVC  [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 表示有点难. 在 Android中, [Fragment 和 Activity 实际上是控制器（controller）](http://www.informit.com/articles/article.aspx?p=2126865). 另一方面, 他们也有点像UI交互, 也可以说是view.
 
-For this reason, it is hard to classify fragments (or activities) as strictly controllers or views. It's better to let them stay in their own `fragments` package. Activities can stay on the top-level package as long as you follow the advice of the previous section. If you are planning to have more than 2 or 3 activities, then make also an `activities` package.
+从这点上说, 很难下定义说fragments (或者 activities) 就是 controllers 或者 views. 所以最好还是让他们呆在自己的包里 fragment 在 `fragments` 包中.只要你遵照刚才的建议， Activities 可以放在高层的包中. 如果有多个activity 可以 组织到`activity` 的一个包中.
 
-Otherwise, the architecture can look like a typical MVC, with a `models` package containing POJOs to be populated through the JSON parser with API responses, and a `views` package containing your custom Views, notifications, action bar views, widgets, etc. Adapters are a gray matter, living between data and views. However, they typically need to export some View via `getView()`, so you can include the `adapters` subpackage inside `views`.
+还有一种, 你的包结构可以是典型的 MVC。 用一个  `models` 包 放些 通过json 解析器 返回的 POJOs , 把自定义视图 通知  action bar , widgets,等等放在 `views` 包里面. Adapters 是个连接器, 放在  数据和视图之间. 然而, 他们很明显需要通过 `getView()` 方法获取view, 所以可以把 `adapters` 包放在 `views` 包里面.
 
-Some controller classes are application-wide and close to the Android system. These can live in a `managers` package. Miscellaneous data processing classes, such as "DateUtils", stay in the `utils` package. Classes that are responsible for interacting with the backend stay in the `network` package.
+有些controller 的类 全局都要用 更贴近 Android 系统. 他们可以放在  `managers` 包里面. 乱七八糟的数据处理类可以类似 "DateUtils",放在 `utils` 包里面. 和后台交互的一些类 则放在`network` 包里面.
 
 总而言之，要贴近后台贴近用户:
 
@@ -237,16 +236,16 @@ com.futurice.project
 
 ### 资源文件
 
-**命名.** Follow the convention of prefixing the type, as in `type_foo_bar.xml`. Examples: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
+**命名.** 遵循约定俗成的下划线写法, 就像 `type_foo_bar.xml`. 比如: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
 
-**组织 layout XMLs文件.** If you're unsure how to format a layout XML, the following convention may help.
+**组织 layout XMLs文件.** 如果你不知道怎么排版一个layout 文件 下面这些约定俗成的东西挺适合你看看.
 
-- One attribute per line, indented by 4 spaces
-- `android:id` as the first attribute always
-- `android:layout_****` attributes at the top
-- `style` attribute at the bottom
-- Tag closer `/>` on its own line, to facilitate ordering and adding attributes.
-- Rather than hard coding `android:text`, consider using [Designtime attributes](http://tools.android.com/tips/layout-designtime-attributes) available for Android Studio.
+- 一行一个属性值，用四个空格进行缩进
+- `android:id` 永远放在第一个位置
+- `android:layout_****` 这些layout属性放在最上面
+- `style` 属性放在下面
+- 方便 排序和添加 新的属性  标签结束符 `/>` 最好单起一行.
+- 考虑使用Android Studio [属性预览功能](http://tools.android.com/tips/layout-designtime-attributes)支持的方式来写些东西 别写死 `android:text`.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -272,14 +271,14 @@ com.futurice.project
 </LinearLayout>
 ```
 
-As a rule of thumb, attributes `android:layout_****` should be defined in the layout XML, while other attributes `android:****` should stay in a style XML. This rule has exceptions, but in general works fine. The idea is to keep only layout (positioning, margin, sizing) and content attributes in the layout files, while keeping all appearance details (colors, padding, font) in styles files.
+一个简单的规则,  `android:layout_****` 这种属性需要定义在 layout XML, 而其他属性 `android:****`放在style XML. 这规则有例外，但是大多数情况下都行得通. 这个理念就是只把布局 (positioning, margin, sizing) 和内容放在布局文件里面, 而样式啊  (colors, padding, font) 这种控制外观的放在 styles 文件里.
 
-The exceptions are:
+哪些是例外呢:
 
-- `android:id` should obviously be in the layout files
-- `android:orientation` for a `LinearLayout` normally makes more sense in layout files
-- `android:text` should be in layout files because it defines content
-- Sometimes it will make sense to make a generic style defining `android:layout_width` and `android:layout_height` but by default these should appear in the layout files
+- `android:id` 这个属性很明显必须放layout文件里面
+- `LinearLayout` 的`android:orientation` 放在layout 里面更合理
+- `android:text` 这个需要放在layout里面因为定义了内容
+- 有时候需要统一宽度 高度 `android:layout_width` `android:layout_height` 把这两个属性抽出去，但是一般来说都是放在自己的layout文件里面
 
 **用法.** Almost every project needs to properly use styles, because it is very common to have a repeated appearance for a view. At least you should have a common style for most text content in the application, for example:
 
