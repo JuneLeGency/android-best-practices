@@ -1,5 +1,6 @@
 # Android 开发的最正确做法
 
+翻译力求信达雅。如果有什么不准确的地方，欢迎大家提出来。有些地方进行了修改，添加了我自己的一些看法。如果需要交流之类的可以邮件我 `lichen900210#gmail.com`
 这是我们从[Futurice](http://www.futurice.com) 开发者得到的经验教训. 希望大家可以通过阅读下面的tips 避免造重复的轮子（Do not repeat yourself）. 如果你对ios和winphone的开发也感兴趣可以参考 [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) 和 [**Windows App Development Best Practices**](https://github.com/futurice/windows-app-development-best-practices) 这两个文档（尚未翻译）.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--best--practices-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1091)
@@ -210,7 +211,7 @@ Android Studio 提供了代码提示用于 Java8 lambdas 表达式. 如果你是
 
 ### Java 包结构
 
- Android 应用的java结构的用 MVC  [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 表示有点难. 在 Android中, [Fragment 和 Activity 实际上是控制器（controller）](http://www.informit.com/articles/article.aspx?p=2126865). 另一方面, 他们也有点像UI交互, 也可以说是view.
+ Android 应用的java结构的用 MVC  [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 表示有点难. 在 Android中, [Fragment 和 Activity 实际上是控制器（controller）](http://www.informit.com/articles/article.aspx?p=2126865). 另一方面, 他们也有点像UI交互, 也可以说是view.（面试有时候会问mvc这块）
 
 从这点上说, 很难下定义说fragments (或者 activities) 就是 controllers 或者 views. 所以最好还是让他们呆在自己的包里 fragment 在 `fragments` 包中.只要你遵照刚才的建议， Activities 可以放在高层的包中. 如果有多个activity 可以 组织到`activity` 的一个包中.
 
@@ -280,7 +281,7 @@ com.futurice.project
 - `android:text` 这个需要放在layout里面因为定义了内容
 - 有时候需要统一宽度 高度 `android:layout_width` `android:layout_height` 把这两个属性抽出去，但是一般来说都是放在自己的layout文件里面
 
-**用法.** Almost every project needs to properly use styles, because it is very common to have a repeated appearance for a view. At least you should have a common style for most text content in the application, for example:
+**用法.** 几乎每个项目都会用到样式，因为 用样式来统一定义 复用 很正常。最起码你有个统一的字体样式, 比如说:
 
 ```xml
 <style name="ContentText">
@@ -289,7 +290,7 @@ com.futurice.project
 </style>
 ```
 
-Applied to TextViews:
+这个用在 TextViews上面:
 
 ```xml
 <TextView
@@ -300,11 +301,11 @@ Applied to TextViews:
     />
 ```
 
-You probably will need to do the same for buttons, but don't stop there yet. Go beyond and move a group of related and repeated `android:****` attributes to a common style.
+没准你也想放在按钮上, 但这么做还远远不够. 进可能的把能抽的 `android:****` 这些属性都抽出来放在一个公用的style文件里面.
 
-**Split a large style file into other files.** You don't need to have a single `styles.xml` file. Android SDK supports other files out of the box, there is nothing magical about the name `styles`, what matters are the XML tags `<style>` inside the file. Hence you can have files `styles.xml`, `styles_home.xml`, `styles_item_details.xml`, `styles_forms.xml`. Unlike resource directory names which carry some meaning for the build system, filenames in `res/values` can be arbitrary.
+**把一个大的style文件分割成零碎的.** 你不需要一个单独的 `styles.xml` 文件. Android SDK 支持其他文件名引用样式,重要的是里面的 `<style>` 标签. 也就是说你可以分割成 `styles.xml`, `styles_home.xml`, `styles_item_details.xml`, `styles_forms.xml`. 不像资源文件夹名字有特殊意义你不能改，编译会出问题, 但在 `res/values` 这里面的文件名是随意的.
 
-**`colors.xml` is a color palette.** There should be nothing else in your `colors.xml` than just a mapping from a color name to an RGBA value. Do not use it to define RGBA values for different types of buttons.
+**`colors.xml` 是颜色样式文件.** 在 `colors.xml` 文件里面就应该只放颜色名和 RGBA 值的映射关系. 别用它来定义特指的按钮.
 
 *别这么干:*
 
@@ -320,7 +321,7 @@ You probably will need to do the same for buttons, but don't stop there yet. Go 
     <color name="comment_shadow">#323232</color>
 ```
 
-You can easily start repeating RGBA values in this format, and that makes it complicated to change a basic color if needed. Also, those definitions are related to some context, like "button" or "comment", and should live in a button style, not in `colors.xml`.
+总而言之你这么写就不好抽出来，万一别的地方要用这个颜色呢？可重复性太差。这种东西 比如按钮 评价 等等应该放在style里面 而不是 `colors.xml` 文件
 
 取而代之这么做:
 
@@ -343,9 +344,9 @@ You can easily start repeating RGBA values in this format, and that makes it com
 </resources>
 ```
 
-Ask for this palette from the designer of the application. The names do not need to be color names as "green", "blue", etc. Names such as "brand_primary", "brand_secondary", "brand_negative" are totally acceptable as well. Formatting colors as such will make it easy to change or refactor colors, and also will make it explicit how many different colors are being used. Normally for a aesthetic UI, it is important to reduce the variety of colors being used.
+问好你的设计师你需要的色调块. 名字不一定非要是颜色具体的名字 比如`蓝色``绿色`. 名字可以是这种 "brand_primary"（品牌主色调）, "brand_secondary"（品牌次色调）都行. 弄好颜色格式也很容易方便你以后批量修改重构, 也能特别明确的知道到底用了多少颜色. 对于一个富有美感的UI来说，减少色彩的多样性挺有必要的.
 
-**Treat dimens.xml like colors.xml.** You should also define a "palette" of typical spacing and font sizes, for basically the same purposes as for colors. A good example of a dimens file:
+**处理 dimens.xml 要像 colors.xml一样.** 你也需要定义一个类似 "调色板"的选择器用来定义间距啊，长度啊,就像我们定义调色板处理颜色一样. 下面是个比较好的例子:
 
 ```xml
 <resources>
@@ -371,11 +372,11 @@ Ask for this palette from the designer of the application. The names do not need
 </resources>
 ```
 
-You should use the `spacing_****` dimensions for layouting, in margins and paddings, instead of hard-coded values, much like strings are normally treated. This will give a consistent look-and-feel, while making it easier to organize and change styles and layouts.
+你应该用 `spacing_****` 尺寸值 来定义间距 边界 而不是 写死, 就像我们平常定义string字符串通用时候一样. 用这种常量给人一种好看的感觉而且改起来比较容易（还是那点，能抽的就抽出来，不要重复写代码）.
 
 **strings.xml**
 
-Name your strings with keys that resemble namespaces, and don't be afraid of repeating a value for two or more keys. Languages are complex, so namespaces are necessary to bring context and break ambiguity.
+用那种带命名空间的方式来命名string, 而且不要担心重复写好多key麻烦. 语言这种东西是复杂的，你不写具体点多加个命名很容易含糊不清.
 
 **差的方式**
 ```xml
@@ -403,7 +404,7 @@ Name your strings with keys that resemble namespaces, and don't be afraid of rep
 <string name="error.message.call">Call failed</string>
 ```
 
-**别建那么深的树形视图.** Sometimes you might be tempted to just add yet another LinearLayout, to be able to accomplish an arrangement of views. This kind of situation may occur:
+**别建那么深的树形视图.** 有时候为了能整理码一大堆界面，你可能尝试就贪图省事加个没弄完的LinearLayout. 这种情况就发生了:
 
 ```xml
 <LinearLayout
@@ -438,20 +439,20 @@ Name your strings with keys that resemble namespaces, and don't be afraid of rep
 </LinearLayout>
 ```
 
-Even if you don't witness this explicitly in a layout file, it might end up happening if you are inflating (in Java) views into other views.
+即使你不是特别重视，有时候这种情况开始会发生.
 
-A couple of problems may occur. You might experience performance problems, because there are is a complex UI tree that the processor needs to handle. Another more serious issue is a possibility of [StackOverflowError](http://stackoverflow.com/questions/2762924/java-lang-stackoverflow-error-suspected-too-many-views).
+很容易出现问题. 你可能遇到性能问题, 因为处理器需要处理一大堆复杂UI树. 最糟糕可能还会是这个 [StackOverflowError](http://stackoverflow.com/questions/2762924/java-lang-stackoverflow-error-suspected-too-many-views)问题.
 
-Therefore, try to keep your views hierarchy as flat as possible: learn how to use [RelativeLayout](https://developer.android.com/guide/topics/ui/layout/relative.html), how to [optimize your layouts](http://developer.android.com/training/improving-layouts/optimizing-layout.html) and to use the [`<merge>` tag](http://stackoverflow.com/questions/8834898/what-is-the-purpose-of-androids-merge-tag-in-xml-layouts).
+所以说, 尽量保证你的view 别那么深: 学习怎么使用 [RelativeLayout](https://developer.android.com/guide/topics/ui/layout/relative.html), 怎么 [优化布局](http://developer.android.com/training/improving-layouts/optimizing-layout.html) 并且尝试使用 [`<merge>` 标签](http://stackoverflow.com/questions/8834898/what-is-the-purpose-of-androids-merge-tag-in-xml-layouts).
 
-**Beware of problems related to WebViews.** When you must display a web page, for instance for a news article, avoid doing client-side processing to clean the HTML, rather ask for a "*pure*" HTML from the backend programmers. [WebViews can also leak memory](http://stackoverflow.com/questions/3130654/memory-leak-in-webview) when they keep a reference to their Activity, instead of being bound to the ApplicationContext. Avoid using a WebView for simple texts or buttons, prefer TextViews or Buttons.
+**当心WebViews会遇到的问题.** 当你需要展示一个网页, 比如新闻页面, 不要再客户端清理html元素, 宁可从后台用  "*纯的*" HTML . [WebViews也会导致内存泄露](http://stackoverflow.com/questions/3130654/memory-leak-in-webview) 当被activity 引用时候, 而不是受 约束ApplicationContext. 尽量TextViews 或者 Buttons代替webview 来干一些事情.
 
 
 ### 测试用的框架
 
-Android SDK's testing framework is still infant, specially regarding UI tests. Android Gradle currently implements a test task called [`connectedAndroidTest`](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing) which runs JUnit tests that you created, using an [extension of JUnit with helpers for Android](http://developer.android.com/reference/android/test/package-summary.html). This means you will need to run tests connected to a device, or an emulator. Follow the official guide [[1]](http://developer.android.com/tools/testing/testing_android.html) [[2]](http://developer.android.com/tools/testing/activity_test.html) for testing.
+Android SDK's 的测试框架还挺薄弱, 尤其是UI测试方面. Android Gradle 最近实现了测试任务叫 [`connectedAndroidTest`](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing) 可以用来跑单元测试, 使用的是  [JUnit的 Android 扩展](http://developer.android.com/reference/android/test/package-summary.html). 也就是说测试时候要连设备 或者模拟器. 要测试可以查阅下这个参考手册 [[1]](http://developer.android.com/tools/testing/testing_android.html) [[2]](http://developer.android.com/tools/testing/activity_test.html) .
 
-**Use [Robolectric](http://robolectric.org/) only for unit tests, not for views.** It is a test framework seeking to provide tests "disconnected from device" for the sake of development speed, suitable specially for unit tests on models and view models. However, testing under Robolectric is inaccurate and incomplete regarding UI tests. You will have problems testing UI elements related to animations, dialogs, etc, and this will be complicated by the fact that you are "walking in the dark" (testing without seeing the screen being controlled).
+**用 [Robolectric](http://robolectric.org/) 这个就单单跑单元测试用, 没法跑界面测试.** 这个测试框架提供了 "不连接设备" 达到 models and view models 关于. 然而, 在 Robolectric 下面测试不精确也没法完整的做ＵＩ测试s. 测试 UI 动画元素 , 对话框, 等等, and this will be complicated by the fact that you are "walking in the dark" (testing without seeing the screen being controlled).
 
 **[Robotium](https://code.google.com/p/robotium/) makes writing UI tests easy.** You do not need Robotium for running connected tests for UI cases, but it will probably be beneficial to you because of its many helpers to get and analyse views, and control the screen. Test cases will look as simple as:
 
