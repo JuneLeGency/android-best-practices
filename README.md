@@ -452,13 +452,13 @@ com.futurice.project
 
 Android SDK's 的测试框架还挺薄弱, 尤其是UI测试方面. Android Gradle 最近实现了测试任务叫 [`connectedAndroidTest`](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing) 可以用来跑单元测试, 使用的是  [JUnit的 Android 扩展](http://developer.android.com/reference/android/test/package-summary.html). 也就是说测试时候要连设备 或者模拟器. 要测试可以查阅下这个参考手册 [[1]](http://developer.android.com/tools/testing/testing_android.html) [[2]](http://developer.android.com/tools/testing/activity_test.html) .
 
-**用 [Robolectric](http://robolectric.org/) 这个就单单跑单元测试用, 没法跑界面测试.** 这个测试框架提供了 "不连接设备" 达到 models and view models 关于. 然而, 在 Robolectric 下面测试不精确也没法完整的做ＵＩ测试s. 测试 UI 动画元素 , 对话框, 等等, and this will be complicated by the fact that you are "walking in the dark" (testing without seeing the screen being controlled).
+**用 [Robolectric](http://robolectric.org/) 这个就单单跑单元测试用, 没法跑界面测试.** 这个测试框架提供了 "不连接设备" 达到 models and view models 关于. 然而, 在 Robolectric 测试不精确,也没法完整的做UI测试. 测试 UI 动画元素 , 对话框, 等等, 用这个东西 有点像"抹黑走路" (看不见屏幕测试).
 
-**[Robotium](https://code.google.com/p/robotium/) makes writing UI tests easy.** You do not need Robotium for running connected tests for UI cases, but it will probably be beneficial to you because of its many helpers to get and analyse views, and control the screen. Test cases will look as simple as:
+**[Robotium](https://code.google.com/p/robotium/) 让你写UI测试更简单.** 你不需要Robotium 用来跑UI链接测试, 但是你会通过他的好多控制屏幕分析视图的这些方法和帮助类受益. 测试例简单的像这样:
 
 ```java
 solo.sendKey(Solo.MENU);
-solo.clickOnText("More"); // searches for the first occurence of "More" and clicks on it
+solo.clickOnText("More"); // 找到第一个 "more"并且点击它
 solo.clickOnText("Preferences");
 solo.clickOnText("Edit File Extensions");
 Assert.assertTrue(solo.searchText("rtf"));
@@ -466,7 +466,7 @@ Assert.assertTrue(solo.searchText("rtf"));
 
 ### 模拟器
 
-要是你是个专业的android 开发者, 买个 [Genymotion 模拟器](http://www.genymotion.com/)证书不错. Genymotion emulators run at a faster frames/sec rate than typical AVD emulators. They have tools for demoing your app, emulating network connection quality, GPS positions, etc. They are also ideal for connected tests. You have access to many (not all) different devices, so the cost of a Genymotion license is actually much cheaper than buying multiple real devices.
+要是你是个专业的android 开发者, 买个 [Genymotion 模拟器](http://www.genymotion.com/)证书不错. Genymotion 比起AVD 更流畅. 他们有工具用来模拟网络连接质量 GPS 和做其他仿真. 他们也能做连接测试. 你可以连接好多设备，实际上比起买好多真机买个测试证书比较便宜了（软文么:(）.
 
 说明: Genymotion 模拟器保留了完整的google服务框架 比如google商店 地图什么的 . 你可能需要测试 Samsung-specific APIs, 所以买个三星设备也许挺需要.
 
@@ -474,7 +474,7 @@ Assert.assertTrue(solo.searchText("rtf"));
 
 [ProGuard](http://proguard.sourceforge.net/) 在 Android项目中 压缩代码模糊代码方面 用的很普遍.
 
-Whether you are using ProGuard or not depends on your project configuration. Usually you would configure gradle to use ProGuard when building a release apk.
+用不用 ProGuard o取决于你的项目配置. 通常当要发布一个正式版本时候你需要 通过 gradle 配ProGuard.
 
 ```groovy
 buildTypes {
@@ -489,30 +489,30 @@ buildTypes {
 }
 ```
 
-In order to determine which code has to be preserved and which code can be discarded or obfuscated, you have to specify one or more entry points to your code. These entry points are typically classes with main methods, applets, midlets, activities, etc.
-Android framework uses a default configuration which can be found from `SDK_HOME/tools/proguard/proguard-android.txt`. Using the above configuration, custom project-specific ProGuard rules, as defined in `my-project/app/proguard-rules.pro`, will be appended to the default configuration.
+你需要特指一个或多个点在你的代码中，要是你想 保护一些代码或者 忽略一些代码 模糊代码。这些条目点是有主方法, applets, midlets, activities, 等等这些的典型的类类。
+Android 框架使用类默认的配置可以在 `SDK_HOME/tools/proguard/proguard-android.txt`找到. 使用上面的配置, 自定义项目混淆规则, 正如定义在 `my-project/app/proguard-rules.pro`这个文件里的, 会添加在默认的配置中.
 
-A common problem related to ProGuard is to see the application crashing on startup with `ClassNotFoundException` or `NoSuchFieldException` or similar, even though the build command (i.e. `assembleRelease`) succeeded without warnings.
-This means one out of two things:
+ 即使编译的时候 (比如 `assembleRelease`) 没有警告就成功了,`ClassNotFoundException` 或者 `NoSuchFieldException` or 或者类似的错误还是很容易在混淆后启动时候问题.
+有可能因为这些一个或多个原因:
 
-1. ProGuard has removed the class, enum, method, field or annotation, considering it's not required.
-2. ProGuard has obfuscated (renamed) the class, enum or field name, but it's being used indirectly by its original name, i.e. through Java reflection.
+1. 考虑到不需要混淆，混淆器可能删除了 class, enum, method, field or annotation.
+2. 混淆器已经混淆了class, enum or field name, 但是又被间接用了原来的名字,比如通过反射的方式.
 
-Check `app/build/outputs/proguard/release/usage.txt` to see if the object in question has been removed.
-Check `app/build/outputs/proguard/release/mapping.txt` to see if the object in question has been obfuscated.
+查查看 `app/build/outputs/proguard/release/usage.txt` 这个对象上面提到的问题的是不是删掉了.
+看看 `app/build/outputs/proguard/release/mapping.txt` 是不是那个东西被混淆了.
 
 In order to prevent ProGuard from *stripping away* needed classes or class members, add a `keep` options to your ProGuard config:
 ```
 -keep class com.futurice.project.MyClass { *; }
 ```
 
-To prevent ProGuard from *obfuscating* classes or class members, add a `keepnames`:
+加上 `keepnames` 如果想要阻止混淆器 *混淆* 类和类成员, :
 ```
 -keepnames class com.futurice.project.MyClass { *; }
 ```
 
-Check [this template's ProGuard config](https://github.com/futurice/android-best-practices/blob/master/templates/rx-architecture/app/proguard-rules.pro) for some examples.
-Read more at [Proguard](http://proguard.sourceforge.net/#manual/examples.html) for examples.
+瞅瞅 [ ProGuard 配置模板](https://github.com/futurice/android-best-practices/blob/master/templates/rx-architecture/app/proguard-rules.pro) 的例子.
+也可以看 [Proguard](http://proguard.sourceforge.net/#manual/examples.html) 这些例子.
 
 **Early on in your project, make a release build** to check whether ProGuard rules are correctly keeping whatever is important. Also whenever you include new libraries, make a release build and test the apk on a device. Don't wait until your app is finally version "1.0" to make a release build, you might get several unpleasant surprises and a short time to fix them.
 
