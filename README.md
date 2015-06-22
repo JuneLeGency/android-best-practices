@@ -1,7 +1,7 @@
 # Android 开发的最正确做法
 
-`翻译力求信达雅。如果有什么不准确的地方，欢迎大家提出来。有些地方进行了修改，添加了我自己的一些看法。如果需要交流之类的可以邮件我 `lichen900210#gmail.com`
-呕心沥血之作希望大家可以从中学到点东西少走弯路。`
+翻译力求信达雅。如果有什么不准确的地方，欢迎大家提出来。有些地方进行了修改，添加了我自己的一些看法。如果需要交流之类的可以邮件我 `lichen900210#gmail.com`
+呕心沥血之作希望大家可以从中学到点东西少走弯路。
 这是我们从[Futurice](http://www.futurice.com) 开发者得到的经验教训. 希望大家可以通过阅读下面的tips 避免造重复的轮子（Do not repeat yourself）. 如果你对ios和winphone的开发也感兴趣可以参考 [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) 和 [**Windows App Development Best Practices**](https://github.com/futurice/windows-app-development-best-practices) 这两个文档（尚未翻译）.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--best--practices-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1091)
@@ -454,7 +454,7 @@ com.futurice.project
 
 Android SDK's 的测试框架还挺薄弱, 尤其是UI测试方面. Android Gradle 最近实现了测试任务叫 [`connectedAndroidTest`](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing) 可以用来跑单元测试, 使用的是  [JUnit的 Android 扩展](http://developer.android.com/reference/android/test/package-summary.html). 也就是说测试时候要连设备 或者模拟器. 要测试可以查阅下这个参考手册 [[1]](http://developer.android.com/tools/testing/testing_android.html) [[2]](http://developer.android.com/tools/testing/activity_test.html) .
 
-**用 [Robolectric](http://robolectric.org/) 这个就单单跑单元测试用, 没法跑界面测试.** 这个测试框架提供了 "不连接设备" 达到 models and view models 关于. 然而, 在 Robolectric 测试不精确,也没法完整的做UI测试. 测试 UI 动画元素 , 对话框, 等等, 用这个东西 有点像"抹黑走路" (看不见屏幕测试).
+**用 [Robolectric](http://robolectric.org/) 这个就单单跑单元测试用, 没法跑界面测试.** 这个测试框架提供了 "不连接设备" 达到 models and view models 关于. 然而, 在 Robolectric 测试不精确,也没法完整的做UI测试. 测试 UI 动画元素 , 对话框, 等等, 用这个东西 有点像"抓瞎" (看不见屏幕测试).
 
 **[Robotium](https://code.google.com/p/robotium/) 让你写UI测试更简单.** 你不需要Robotium 用来跑UI链接测试, 但是你会通过他的好多控制屏幕分析视图的这些方法和帮助类受益. 测试例简单的像这样:
 
