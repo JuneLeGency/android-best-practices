@@ -235,8 +235,8 @@ com.futurice.project
    ├─ widgets
    └─ notifications
 ```
-我的包结构
-[![包](https://github.com/JuneLeGency/android-best-practices/package_view.jpg)]
+我的项目包结构
+[![包](https://github.com/JuneLeGency/android-best-practices/blob/master/package_view.jpg)]
 ### 资源文件
 
 **命名.** 遵循约定俗成的下划线写法, 就像 `type_foo_bar.xml`. 比如: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
