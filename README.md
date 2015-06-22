@@ -501,7 +501,7 @@ Android 框架使用类默认的配置可以在 `SDK_HOME/tools/proguard/proguar
 查查看 `app/build/outputs/proguard/release/usage.txt` 这个对象上面提到的问题的是不是删掉了.
 看看 `app/build/outputs/proguard/release/mapping.txt` 是不是那个东西被混淆了.
 
-In order to prevent ProGuard from *stripping away* needed classes or class members, add a `keep` options to your ProGuard config:
+添加 `keep` 选项到你的配置ProGuard中，防止混淆器略过需要的类和类成员:
 ```
 -keep class com.futurice.project.MyClass { *; }
 ```
@@ -514,11 +514,11 @@ In order to prevent ProGuard from *stripping away* needed classes or class membe
 瞅瞅 [ ProGuard 配置模板](https://github.com/futurice/android-best-practices/blob/master/templates/rx-architecture/app/proguard-rules.pro) 的例子.
 也可以看 [Proguard](http://proguard.sourceforge.net/#manual/examples.html) 这些例子.
 
-**Early on in your project, make a release build** to check whether ProGuard rules are correctly keeping whatever is important. Also whenever you include new libraries, make a release build and test the apk on a device. Don't wait until your app is finally version "1.0" to make a release build, you might get several unpleasant surprises and a short time to fix them.
+**在你的项目早起建一个发布版本** 来检查混淆是不是弄好了很有必要. 还有不论什么时候当你加库 发布新版都测试下在设备上能不能运行。不要等你发布正式"1.0"版本的时候才发现自己有好多意外的惊喜（惊吓吧:(），需要好久才能修.
 
-**建议.** Save the `mapping.txt` file for every release that you publish to your users. By retaining a copy of the `mapping.txt` file for each release build, you ensure that you can debug a problem if a user encounters a bug and submits an obfuscated stack trace.
+**建议.** 每次发布时候保存 `mapping.txt`文件 . 有了这个 `mapping.txt` 文件每次你发布出什么问题啊 都可以调试，知道bug在哪。
 
-**DexGuard**. If you need hard-core tools for optimizing, and specially obfuscating release code, consider [DexGuard](http://www.saikoa.com/dexguard), a commercial software made by the same team that built ProGuard. It can also easily split Dex files to solve the 65k methods limitation.
+**DexGuard**. 如果你需要更好的优化和混淆，更强制 安全可以用 [DexGuard](http://www.saikoa.com/dexguard), 跟ProGuard 一个组织出的. 也可以轻松的切割DEX文件防止 65K那个限制.
 
 ### 感谢
 
