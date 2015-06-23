@@ -2,9 +2,11 @@
 
 翻译力求信达雅。如果有什么不准确的地方，欢迎大家提出来。有些地方进行了修改，添加了我自己的一些看法。如果需要交流之类的可以邮件我 `lichen900210#gmail.com`
 呕心沥血之作希望大家可以从中学到点东西少走弯路。
+如有不确切的大家参照[原版中文翻译 ](https://github.com/JuneLeGency/android-best-practices/blob/master/translations/Chinese/README.cn.md)
 这是我们从[Futurice](http://www.futurice.com) 开发者得到的经验教训. 希望大家可以通过阅读下面的tips 避免造重复的轮子（Do not repeat yourself）. 如果你对ios和winphone的开发也感兴趣可以参考 [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) 和 [**Windows App Development Best Practices**](https://github.com/futurice/windows-app-development-best-practices) 这两个文档（尚未翻译）.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--best--practices-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1091)
+
 
 ## 总结
 
